@@ -804,15 +804,16 @@ mod sys {
 
     use super::os_prelude::*;
     use super::StdIoResult;
+    use winapi::um::winnt::MAXDWORD;
     /// Overrides timeout value set by serialport-rs so that the read end will
     /// never wake up with 0-byte payload.
     pub(crate) fn override_comm_timeouts(handle: RawHandle) -> StdIoResult<()> {
         let mut timeouts = COMMTIMEOUTS {
             // wait at most 1ms between two bytes (0 means no timeout)
-            ReadIntervalTimeout: 1,
+            ReadIntervalTimeout: MAXDWORD,
             // disable "total" timeout to wait at least 1 byte forever
-            ReadTotalTimeoutMultiplier: 0,
-            ReadTotalTimeoutConstant: 0,
+            ReadTotalTimeoutMultiplier: MAXDWORD,
+            ReadTotalTimeoutConstant: 1,
             // write timeouts are just copied from serialport-rs
             WriteTotalTimeoutMultiplier: 0,
             WriteTotalTimeoutConstant: 0,
